@@ -1,0 +1,26 @@
+ <%include partials/header%>
+ <div class="container">
+	 <header class="jumbotron">
+	 <div class="container">
+	 	<h1> Welcome To mountains </h1>
+	 	<h4> Welcome to our hand-picked mountains from all over the world</h4>
+	 	 <a class = "btn btn-primary btn-large" href="/mountains/new">Add New Mountain<a/>
+	 </div>
+	 </header>
+	<div class ="row text-center" id="imgRow">
+		<% mountains.forEach(function(mountain){ %>
+		<div class="col-md-3 col-sm-6">
+		  <div class="thumbnail">
+				 <img src ="<%=mountain.image%>">
+				 <div class="caption">
+		  			<h4><%= mountain.name %></h4>
+	      		 </div>
+	      <p>
+		  	<a class="btn btn-success" href = "/mountains/<%=mountain._id%>">Show more </a>
+		  </p>
+		  </div>
+		</div>
+		<%})%>
+	</div>
+ </div>
+  <%include partials/footer%>
