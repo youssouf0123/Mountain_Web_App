@@ -2,6 +2,7 @@ var express = require("express");
 var router = express.Router();
 var comment = require("../models/comment");
 var mountain = require("../models/mountain");
+var user = require("../models/user");
 //Home page
 router.get("/",function(req,res){
 	res.render("home");
@@ -18,15 +19,19 @@ router.get("/mountains",function(req,res){
 });
 
 //Request form to create new mountains
-router.get("/mountains/new",function(req,res){
+router.get("/mountains/new",isLoggedIn,function(req,res){
 	res.render("new");
 });
 // Create new mountains Requested
-router.post("/mountains",function(req,res){
+router.post("/mountains",isLoggedIn, function(req,res){
 	var image = req.body.image;
 	var name = req.body.name;
 	var desc = req.body.desc
-	var newMountains = { name : name , image : image, description : desc};
+	var author = {
+		id : req.user._id,
+		username : req.user.username
+	};
+	var newMountains = { name : name , image : image, description : desc , author : author};
 	mountain.create(newMountains,function(err,newlycreate){
 		if(err){
 			console.log(err);
@@ -46,13 +51,23 @@ router.get("/mountains/:id",function(req,res){
 	})
 })
 // Request form to update mountains
-router.get("/mountains/:id/edit",function(req,res){
-
-	mountain.findById(req.params.id,function(err,foundMount){
-		if(err){console.log(err);} else{
-			res.render("edit",{mountains : foundMount});
+router.get("/mountains/:id/edit",isLoggedIn, function(req,res){
+ if(req.isAuthenticated()){
+ 	mountain.findById(req.params.id,function(err,foundMount){
+		if(err){
+			console.log(err);
+		} else {
+			if(foundMount.author.id.equals(req.user._id)){
+				res.render("edit",{mountains : foundMount});
+			} else {
+				res.redirect("/mountains");
+			}
 		}
 	})
+ } else {
+ 	res.redirect("/mountains");
+ }
+
 })
 // Update mountains Requested
 router.put("/mountains/:id",function(req,res){
@@ -65,7 +80,7 @@ router.put("/mountains/:id",function(req,res){
 	})
 })
 // Delete mountains
-router.delete("/mountains/:id",function(req,res){
+router.delete("/mountains/:id",isLoggedIn, function(req,res){
 	var image = req.body.image;
 	var name = req.body.name;
 	var id = req.params.id;
@@ -76,7 +91,16 @@ router.delete("/mountains/:id",function(req,res){
 			res.redirect("/mountains");
 		}
 	})
-})
+});
+
+
+function isLoggedIn(req,res,next){
+	if(req.isAuthenticated()){
+		return next();
+	}
+	res.redirect("/login")
+};
+
 
 
 module.exports = router;

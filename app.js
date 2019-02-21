@@ -12,18 +12,46 @@ var user = require("./models/user");
 var mountain = require("./models/mountain");
 var mountainRoutes = require("./routes/mountains");
 var commentRoutes = require("./routes/comments");
+var middlewareRoutes = require("./routes/middlewares");
 var mongodb = require("mongodb");
 var mongoose = require("mongoose");
 var seedDb = require("./seed/seed");
+var passport = require("passport");
+var LocalStrategy = require("passport-local");
+var passportLocalMongoose = require("passport-local-mongoose");
+var session = require("express-session");
 app.use(express.static(path.join(__dirname,"/public/")));
 app.use("/css", express.static(path.join(__dirname,"/node_modules/bootstrap/dist/css")));
 app.use("/js", express.static(path.join(__dirname,"/node_modules/bootstrap/dist/js")));
 app.use("/js", express.static(path.join(__dirname,"/node_modules/jquery.3-3-2/dist")));
 app.use(methodOverride("_method"));
+mongoose.connect("mongodb://localhost/yelp_mountains");
+//Passport Config
+app.use(session({
+	secret : "I love coding",
+	resave : false,
+	saveUninitialized : false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(user.authenticate()));
+passport.serializeUser(user.serializeUser());
+passport.deserializeUser(user.deserializeUser());
+app.use(function(req,res,next){
+	res.locals.currentUser = req.user || null;
+	next();
+});
 app.use(mountainRoutes);
 app.use(commentRoutes);
-mongoose.connect("mongodb://localhost/yelp_mountains");
+app.use(require("./routes/middlewares"));
 
+
+function isLoggedIn(req,res,next){
+	if(req.isAuthenticated()){
+		return next();
+	}
+	res.redirect("/login")
+};
 
 
 

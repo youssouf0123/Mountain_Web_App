@@ -16,6 +16,7 @@
 	 			<h4 class="pull-right">$10</h4>
 	 			<h1><%= mountains.name %></h1>
 	 			<p><%=mountains.description%></p>
+	 			<p><em>Submitted By </em><%=mountains.author.username%></p>
 	 			<a class = "btn btn-primary btn-large" href="/mountains/<%=mountains._id%>/edit">UpdateMountain</a>
 	 			<form id="form-delete" action="/mountains/<%=mountains._id%>?_method=DELETE" method="POST">
 					<button class="btn btn-danger">DELETE</button>
@@ -27,11 +28,11 @@
 	 				<a class = "btn btn-primary btn-large" href="/mountains/<%=mountains._id%>/comments/new">AddNewComment</a>
 	 			</div>
 	 			<hr>
-	 			<%mountains.comments.forEach(function(mountain){%>
+	 			<%mountains.comments.forEach(function(comment){%>
 					<div class="row">
 						<div class="col-md-12">
-							<strong><%=mountain.author%></strong><span class="pull-right"> 12 days ago</span>
-							<p> <%=mountain.text%> </p>
+							<strong><%=comment.author.username%></strong><span class="pull-right"> 12 days ago</span>
+							<p> <%=comment.text%> </p>
 						</div>
 					</div>
 				<%})%>
