@@ -73,18 +73,27 @@ router.get("/mountains/:id/edit",isLoggedIn, function(req,res){
 router.put("/mountains/:id",function(req,res){
 	var image = req.body.image;
 	var name = req.body.name;
-	mountain.findByIdAndUpdate(req.params.id,{$set:{name:name, image:image}},function(err,updateMount){
+	var desc = req.body.desc
+	var author = {
+		id : req.user._id,
+		username : req.user.username
+	};
+	mountain.findByIdAndUpdate(req.params.id,{$set:{name:name, image:image, description : desc}},function(err,updateMount){
 		if(err){console.log(err)} else {
 			res.redirect("/mountains/"+req.params.id);
 		}
 	})
 })
 // Delete mountains
-router.delete("/mountains/:id",isLoggedIn, function(req,res){
+router.delete("/mountains/:id",ownerShip, function(req,res){
 	var image = req.body.image;
 	var name = req.body.name;
-	var id = req.params.id;
-	mountain.findByIdAndRemove(req.params.id,{$set:{name:name, image:image}},function(err,deleteMount){
+	var desc = req.body.desc
+	var author = {
+		id : req.user._id,
+		username : req.user.username
+	};
+	mountain.findByIdAndRemove(req.params.id,{$set:{name:name, image:image, author : author, description : desc}},function(err,deleteMount){
 		if(err){
 			console.log(err);
 		} else {
@@ -93,6 +102,20 @@ router.delete("/mountains/:id",isLoggedIn, function(req,res){
 	})
 });
 
+function ownerShip(req,res,next){
+	if(req.isAuthenticated()){
+		mountain.findById(req.params.id,function(err,mountain){
+			if(err){
+				console.log(err);
+			} else {
+				if(mountain.author.id.equals(req.user._id)){
+					return next();
+				}
+				res.redirect("/mountains");
+			}
+		})
+	}
+};
 
 function isLoggedIn(req,res,next){
 	if(req.isAuthenticated()){
