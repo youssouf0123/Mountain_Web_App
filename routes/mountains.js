@@ -3,6 +3,7 @@ var router = express.Router();
 var comment = require("../models/comment");
 var mountain = require("../models/mountain");
 var user = require("../models/user");
+var middlewareObj = require("../Middleware/auth");
 //Home page
 router.get("/",function(req,res){
 	res.render("home");
@@ -19,11 +20,11 @@ router.get("/mountains",function(req,res){
 });
 
 //Request form to create new mountains
-router.get("/mountains/new",isLoggedIn,function(req,res){
+router.get("/mountains/new",middlewareObj.isLoggedIn,function(req,res){
 	res.render("new");
 });
 // Create new mountains Requested
-router.post("/mountains",isLoggedIn, function(req,res){
+router.post("/mountains",middlewareObj.isLoggedIn, function(req,res){
 	var image = req.body.image;
 	var name = req.body.name;
 	var desc = req.body.desc
@@ -51,10 +52,11 @@ router.get("/mountains/:id",function(req,res){
 	})
 })
 // Request form to update mountains
-router.get("/mountains/:id/edit",isLoggedIn, function(req,res){
+router.get("/mountains/:id/edit",middlewareObj.isLoggedIn, function(req,res){
  if(req.isAuthenticated()){
  	mountain.findById(req.params.id,function(err,foundMount){
 		if(err){
+			res.redirect("back");
 			console.log(err);
 		} else {
 			if(foundMount.author.id.equals(req.user._id)){
@@ -79,13 +81,16 @@ router.put("/mountains/:id",function(req,res){
 		username : req.user.username
 	};
 	mountain.findByIdAndUpdate(req.params.id,{$set:{name:name, image:image, description : desc}},function(err,updateMount){
-		if(err){console.log(err)} else {
+		if(err){
+			res.redirect("back");
+			console.log(err)
+		} else {
 			res.redirect("/mountains/"+req.params.id);
 		}
 	})
 })
 // Delete mountains
-router.delete("/mountains/:id",ownerShip, function(req,res){
+router.delete("/mountains/:id",middlewareObj.ownerShip, function(req,res){
 	var image = req.body.image;
 	var name = req.body.name;
 	var desc = req.body.desc
@@ -95,6 +100,7 @@ router.delete("/mountains/:id",ownerShip, function(req,res){
 	};
 	mountain.findByIdAndRemove(req.params.id,{$set:{name:name, image:image, author : author, description : desc}},function(err,deleteMount){
 		if(err){
+			res.redirect("back");
 			console.log(err);
 		} else {
 			res.redirect("/mountains");
@@ -102,27 +108,6 @@ router.delete("/mountains/:id",ownerShip, function(req,res){
 	})
 });
 
-function ownerShip(req,res,next){
-	if(req.isAuthenticated()){
-		mountain.findById(req.params.id,function(err,mountain){
-			if(err){
-				console.log(err);
-			} else {
-				if(mountain.author.id.equals(req.user._id)){
-					return next();
-				}
-				res.redirect("/mountains");
-			}
-		})
-	}
-};
-
-function isLoggedIn(req,res,next){
-	if(req.isAuthenticated()){
-		return next();
-	}
-	res.redirect("/login")
-};
 
 
 
