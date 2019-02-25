@@ -52,27 +52,18 @@ router.get("/mountains/:id",function(req,res){
 	})
 })
 // Request form to update mountains
-router.get("/mountains/:id/edit",middlewareObj.isLoggedIn, function(req,res){
- if(req.isAuthenticated()){
+router.get("/mountains/:id/edit",middlewareObj.ownerShip, function(req,res){
  	mountain.findById(req.params.id,function(err,foundMount){
-		if(err){
-			res.redirect("back");
-			console.log(err);
-		} else {
-			if(foundMount.author.id.equals(req.user._id)){
-				res.render("edit",{mountains : foundMount});
-			} else {
-				res.redirect("/mountains");
-			}
-		}
-	})
- } else {
- 	res.redirect("/mountains");
- }
-
-})
+ 		if(err){
+ 			res.redirect("back");
+ 			console.log(err);
+ 		} else {
+ 			res.render("edit",{mountains : foundMount})
+ 		}
+ 	})
+ });
 // Update mountains Requested
-router.put("/mountains/:id",function(req,res){
+router.put("/mountains/:id",middlewareObj.ownerShip,function(req,res){
 	var image = req.body.image;
 	var name = req.body.name;
 	var desc = req.body.desc

@@ -17,7 +17,7 @@ middlewareObj.ownerShip = function(req,res,next){
 			if(err){
 				console.log(err);
 			} else {
-				if(mountain.author.id.equals(req.user._id)){
+				if( req.user.admin || mountain.author.id.equals(req.user._id)){
 					return next();
 				}
 				res.redirect("/mountains");
@@ -32,7 +32,7 @@ middlewareObj.CommentOwnerShip = function(req,res,next){
 			if(err){
 				console.log(err);
 			} else {
-				if(comment.author.id.equals(req.user._id)){
+				if(comment.author.id.equals(req.user._id) || req.user.admin){
 					return next();
 				}
 				res.redirect("/mountains");
