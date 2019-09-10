@@ -25,7 +25,7 @@ app.use("/css", express.static(path.join(__dirname,"/node_modules/bootstrap/dist
 app.use("/js", express.static(path.join(__dirname,"/node_modules/bootstrap/dist/js")));
 app.use("/js", express.static(path.join(__dirname,"/node_modules/jquery.3-3-2/dist")));
 app.use(methodOverride("_method"));
-mongoose.connect("mongodb://localhost/yelp_mountains");
+mongoose.connect("mongodb+srv://youssouf:youssouf@cluster0-mua3r.mongodb.net/test?retryWrites=true&w=majority");
 //Passport Config
 app.use(session({
 	secret : "I love coding",
