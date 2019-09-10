@@ -27,7 +27,7 @@ app.use("/js", express.static(path.join(__dirname,"/node_modules/jquery.3-3-2/di
 app.use(methodOverride("_method"));
 //mongoose.connect("mongodb+srv://youssouf:youssouf@cluster0-mua3r.mongodb.net/test?retryWrites=true&w=majority");
 
-mongoose.connect("process.env.MONGOLAB_JADE_URI");
+mongoose.connect(process.env.MONGOLAB_JADE_URI);
 //Passport Config
 app.use(session({
 	secret : "I love coding",
