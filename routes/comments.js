@@ -31,6 +31,7 @@ router.post("/mountains/:id/comments",middlewareObj.isLoggedIn, function(req,res
 					newComment.save();
 					mountains.comments.push(newComment);
 					mountains.save();
+					req.flash("success","Successfully added a comment");
 					res.redirect("/mountains/" + mountains._id);
 				}
 
@@ -67,6 +68,7 @@ router.delete("/mountains/:id/comments/:comment_id",middlewareObj.CommentOwnerSh
 			res.redirect("back");
 		} else {
 			console.log(deleteComment);
+			req.flash("success","Comment deleted");
 			res.redirect("/mountains/"+req.params.id)
 		}
 	})

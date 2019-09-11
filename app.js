@@ -1,5 +1,6 @@
 var express = require("express");
 var app = express();
+var flash = require("connect-flash");
 var bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended : true}));
 //app.use(bodyParser.JSON());
@@ -25,6 +26,7 @@ app.use("/css", express.static(path.join(__dirname,"/node_modules/bootstrap/dist
 app.use("/js", express.static(path.join(__dirname,"/node_modules/bootstrap/dist/js")));
 app.use("/js", express.static(path.join(__dirname,"/node_modules/jquery.3-3-2/dist")));
 app.use(methodOverride("_method"));
+app.use(flash());
 mongoose.connect(process.env.MONGOLAB_JADE_URI || "mongodb+srv://youssouf:youssouf@cluster0-mua3r.mongodb.net/test?retryWrites=true&w=majority");
 
 //mongoose.connect(process.env.MONGOLAB_JADE_URI);
@@ -41,6 +43,8 @@ passport.serializeUser(user.serializeUser());
 passport.deserializeUser(user.deserializeUser());
 app.use(function(req,res,next){
 	res.locals.currentUser = req.user || null;
+	res.locals.error = req.flash("error");
+	res.locals.success = req.flash("success");
 	next();
 });
 app.use(mountainRoutes);
