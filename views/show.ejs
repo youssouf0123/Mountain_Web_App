@@ -17,7 +17,7 @@
 	 			<h1><%= mountains.name %></h1>
 	 			<p><%=mountains.description%></p>
 	 			<p><em>Submitted By </em><%=mountains.author.username%></p>
-	 			<%if(currentUser && mountains.author.id.equals(currentUser._id) || currentUser && currentUser.AdminCode){%>
+	 			<%if(currentUser && mountains.author.id.equals(currentUser._id) || currentUser && currentUser.admin){%>
 	 			<a class = "btn btn-primary btn-large" href="/mountains/<%=mountains._id%>/edit">UpdateMountain</a>
 	 			<form id="form-delete" action="/mountains/<%=mountains._id%>?_method=DELETE" method="POST">
 					<button class="btn btn-danger">DELETE</button>
@@ -35,7 +35,7 @@
 						<div class="col-md-12">
 							<strong><%=comment.author.username%></strong><span class="pull-right"> 12 days ago</span>
 							<p> <%=comment.text%> </p>
-							<%if(currentUser && comment.author.id.equals(currentUser._id) || currentUser && currentUser.AdminCode){%>
+							<%if(currentUser && comment.author.id.equals(currentUser._id) || currentUser && currentUser.admin){%>
 							<a class="btn btn-xs btn-warning" href = "/mountains/<%=mountains._id%>/comments/<%=comment._id%>/edit">edit</a>
 							<form id="form-delete" action = "/mountains/<%=mountains._id%>/comments/<%=comment._id%>?_method=DELETE" method="POST">
 								<button class="btn btn-xs btn-danger">Delete</button>
