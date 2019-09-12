@@ -52,12 +52,12 @@ app.use(commentRoutes);
 app.use(require("./routes/middlewares"));
 
 
-function isLoggedIn(req,res,next){
-	if(req.isAuthenticated()){
-		return next();
-	}
-	res.redirect("/login")
-};
+// function isLoggedIn(req,res,next){
+// 	if(req.isAuthenticated()){
+// 		return next();
+// 	}
+// 	res.redirect("/login")
+// };
 
 
 
